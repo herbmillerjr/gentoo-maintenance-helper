@@ -1,0 +1,15 @@
+excludes:
+  - seamonkey
+  - thunderbird
+  - assistant
+specials:
+  - name: thunderbird
+    use:
+      - -system-libvpx
+  - name: assistant
+    use:
+      - -webkit
+  - name: seamonkey
+    use:
+      - -system-libvpx
+
