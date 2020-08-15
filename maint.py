@@ -73,11 +73,10 @@ if global_arguments.upgrade:
 		command.append("--backtrack=30")
 	for exclude in global_configuration['excludes']:
 		command.append("--exclude={0}".format(exclude))
-	command.append("world")
+	command+=["@world","@live-rebuild"]
 	inform(" ".join(command))
 	subprocess.run(["emerge","--sync"])
 	subprocess.run(command)
-	subprocess.run(["emerge","-a","--keep-going","@live-rebuild"])
 
 if global_arguments.special:
 	generic_command=["emerge","-a1","--keep-going"]
