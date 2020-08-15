@@ -90,15 +90,18 @@ if global_arguments.special:
 	for package in global_configuration['specials']:
 		environment=os.environ
 		environment['USE']=" ".join(package['use'])
+		environment['MAKEOPTS']="-j{0}".format(global_arguments.threads)
 		specific_command=generic_command + [package['name']]
-		inform("USE='{0}' {1}".format(environment['USE']," ".join(specific_command)))
-		subprocess.run(specific_command)
+		inform("USE='{0}' MAKEOPTS='{1}' {2}".format(environment['USE'],environment['MAKEOPTS']," ".join(specific_command)))
+		subprocess.run(specific_command,env=environment)
 
 if global_arguments.clean:
 	subprocess.run(["emerge","-a","--depclean"])
 	remove_outdated_kernels()
-	subprocess.run(["emerge","-a","@preserved-rebuild"])
-	subprocess.run(["revdep-rebuild"])
+	environment=os.environ
+	environment['MAKEOPTS']="-j{0}".format(global_arguments.threads)
+	subprocess.run(["emerge","-a","@preserved-rebuild"],env=environment)
+	subprocess.run(["revdep-rebuild"],env=environment)
 	subprocess.run(["etc-update"])
 	subprocess.run(["haskell-updater","-uv"])
 	subprocess.run(["eselect","news","read"])
