@@ -68,15 +68,20 @@ def remove_outdated_kernels():
 			shutil.rmtree(path)
 
 if global_arguments.upgrade:
+	subprocess.run(["emerge","--sync"])
+	environment=os.environ
+	environment['MAKEOPTS']="-j{0}".format(global_arguments.threads)
 	command=["emerge","-uDNa","--keep-going"]
 	if global_arguments.backtrack:
 		command.append("--backtrack=30")
 	for exclude in global_configuration['excludes']:
 		command.append("--exclude={0}".format(exclude))
-	command+=["@world","@live-rebuild"]
-	inform(" ".join(command))
-	subprocess.run(["emerge","--sync"])
-	subprocess.run(command)
+	command.append("@world")
+	inform("MAKEOPTS='{0}' {1}".format(environment['MAKEOPTS']," ".join(command)))
+	subprocess.run(command,env=environment)
+	command=["emerge","-a","--keep-going","@live-rebuild"]
+	inform("MAKEOPTS='{0}' {1}".format(environment['MAKEOPTS']," ".join(command)))
+	subprocess.run(command,env=environment)
 
 if global_arguments.special:
 	generic_command=["emerge","-a1","--keep-going"]
