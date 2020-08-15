@@ -116,7 +116,7 @@ if global_arguments.kernel:
 		["make","-j{0}".format(global_arguments.threads)],
 		["make","install"],
 		["make","modules_install"],
-		["grub-mkconfig","-o","/boot/grub/grub.cfg"]
+		["grub-mkconfig","-o","{0}/grub/grub.cfg".format(global_configuration['boot']['path'])]
 	]
 	for command in commands:
 		inform(command)
