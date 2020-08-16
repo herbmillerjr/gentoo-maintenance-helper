@@ -74,8 +74,9 @@ if global_arguments.upgrade:
 	command=["emerge","-uDNa","--keep-going"]
 	if global_arguments.backtrack:
 		command.append("--backtrack=30")
-	for exclude in global_configuration['excludes']:
-		command.append("--exclude={0}".format(exclude))
+	if 'excludes' in global_configuration:
+		for exclude in global_configuration['excludes']:
+			command.append("--exclude={0}".format(exclude))
 	command.append("@world")
 	inform("MAKEOPTS='{0}' {1}".format(environment['MAKEOPTS']," ".join(command)))
 	subprocess.run(command,env=environment)
