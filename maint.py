@@ -104,7 +104,8 @@ if global_arguments.clean:
 	subprocess.run(["emerge","-a","@preserved-rebuild"],env=environment)
 	subprocess.run(["revdep-rebuild"],env=environment)
 	subprocess.run(["etc-update"])
-	subprocess.run(["haskell-updater","-uv"])
+	if "[I]" in subprocess.run(["equery","y","ghc"],stdout=subprocess.PIPE,universal_newlines=True).stdout:
+		subprocess.run(["haskell-updater","-uv"])
 	subprocess.run(["eselect","news","read"])
 
 if global_arguments.kernel:
