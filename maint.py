@@ -18,6 +18,7 @@ operation.add_argument("-u","--upgrade",dest="upgrade",action='store_true',help=
 operation.add_argument("-s","--special",dest="special",action='store_true',help="Upgrade special case packages")
 operation.add_argument("-c","--clean",dest="clean",action='store_true',help="Remove outdated packages")
 operation.add_argument("-k","--kernel",dest="kernel",action='store_true',help="Bump and rebuild the kernel")
+operation.add_argument("-m","--modules",dest="modules",action='store_true',help="Rebuild kernel modules")
 global_arguments=parser.parse_args()
 
 with open("/usr/local/etc/{0}.yaml".format(os.path.splitext(os.path.basename(__file__))[0]),'r') as stream:
@@ -131,3 +132,10 @@ if global_arguments.kernel:
 	for command in commands:
 		inform(command)
 		subprocess.run(command,cwd=working_directory)
+
+if global_arguments.modules:
+	environment=os.environ
+	environment['MAKEOPTS']="-j{0}".format(global_arguments.threads)
+	command=["emerge","-a","--keep-going","@module-rebuild"]
+	inform("MAKEOPTS='{0}' {1}".format(environment['MAKEOPTS']," ".join(command)))
+	subprocess.run(command,env=environment)
